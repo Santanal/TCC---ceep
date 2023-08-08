@@ -1,0 +1,309 @@
+CREATE TABLE tb_cidades (
+  codcidade INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL,
+  estado VARCHAR(2) CHECK (estado IN ('PR'))
+);
+
+CREATE TABLE tb_modelos (
+  codmodelo INT AUTO_INCREMENT PRIMARY KEY,
+  modelo VARCHAR(30) NOT NULL
+);
+
+CREATE TABLE tb_marcas (
+  codmarca INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE tb_carros (
+  codcarro INT AUTO_INCREMENT PRIMARY KEY,
+  ano INT NOT NULL,
+  nome VARCHAR(50) NOT NULL,
+  ativo CHAR(1) NOT NULL DEFAULT 'S',
+  CONSTRAINT ck_ativo CHECK (ativo = 'S' OR ativo = 'N')
+);
+
+CREATE TABLE tb_imagens (
+  codimagem INT AUTO_INCREMENT PRIMARY KEY,
+  caminhoimagem VARCHAR(255) NOT NULL,
+  codcarro INT NOT NULL,
+  CONSTRAINT imgcarros FOREIGN KEY (codcarro) REFERENCES tb_carros(codcarro)
+);
+
+CREATE TABLE tb_clientes (
+  codcliente INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(30) NOT NULL,
+  cpf BIGINT NOT NULL,
+  fone BIGINT NOT NULL,
+  cep BIGINT,
+  email VARCHAR(50) NOT NULL,
+  senha VARCHAR(30) NOT NULL,
+  ativo CHAR(1) NOT NULL DEFAULT 'S',
+  complemento VARCHAR(50),
+  rua VARCHAR(50) NOT NULL,
+  numero INT NOT NULL,
+  bairro VARCHAR(30) NOT NULL,
+  tipo CHAR(1) NOT NULL DEFAULT 'C',
+  datanasccliente DATE NOT NULL,
+  codcidade INT NOT NULL,
+  CONSTRAINT ck_ativo CHECK (ativo = 'S' OR ativo = 'N'),
+  CONSTRAINT ck_tipo CHECK (tipo = 'C' OR tipo = 'A'),
+  CONSTRAINT fkcidades FOREIGN KEY (codcidade) REFERENCES tb_cidades(codcidade)
+);
+
+CREATE TABLE tb_vendas (
+  codvenda INT AUTO_INCREMENT PRIMARY KEY,
+  datavenda DATE NOT NULL,
+  tipo_pagamento VARCHAR(30) NOT NULL,
+  observacao VARCHAR(50),
+  valor_entrega FLOAT(5,2) NOT NULL,
+  codcliente INT,
+  CONSTRAINT fkclientes FOREIGN KEY (codcliente) REFERENCES tb_clientes(codcliente)
+);
+
+CREATE TABLE tb_vendas_carros (
+  codvendacarro INT AUTO_INCREMENT PRIMARY KEY,
+  valor FLOAT(5,2) NOT NULL,
+  quantidade INT NOT NULL,
+  codcarro INT,
+  codvenda INT,
+  CONSTRAINT vendcarros FOREIGN KEY (codcarro) REFERENCES tb_carros(codcarro),
+  CONSTRAINT fkvendas FOREIGN KEY (codvenda) REFERENCES tb_vendas(codvenda)
+);
+
+CREATE TABLE tb_marca_modelos_carros (
+  codmarcamodelocarro INT AUTO_INCREMENT PRIMARY KEY,
+  codmarca INT,
+  codmodelo INT,
+  codcarro INT,
+  CONSTRAINT fkmarcas FOREIGN KEY (codmarca) REFERENCES tb_marcas(codmarca),
+  CONSTRAINT fkmodelos FOREIGN KEY (codmodelo) REFERENCES tb_modelos(codmodelo),
+  CONSTRAINT fkcarros FOREIGN KEY (codcarro) REFERENCES tb_carros(codcarro)
+);
+
+INSERT INTO tb_cidades (codcidade, nome, estado) VALUES
+(2853, 'Cascavel', 'PR');
+
+INSERT INTO tb_clientes (codcliente, nome, cpf, fone, cep, email, senha, ativo, complemento, rua, numero, bairro, tipo, datanasccliente, codcidade) VALUES
+(1, 'sergio', '12345678912', '45999855332', '85239412', 'aduh@hotmail.com', '123456', 'S', 'casa', 'noronha', '5295', 'marte', 'C', '1995-06-02', '2853'),
+(2, 'matheus', '19734567895', '45999625412', '85239222', 'okklk@hotmail.com', '123456', 'S', 'casa', 'julio', '0314', 'neva', 'C', '1980-05-15', '2853'),
+(3, 'lucas', '99999999999', '45999899820', '85239452', 'awds5222@hotmail.com', '123456', 'S', 'casa', 'cuiaba', '6666', 'parque', 'C', '2000-09-13', '2853'),
+(4, 'jorge', '02456284321', '45999800294', '85239999', 'ujijjjikm@hotmail.com', '123456', 'S', 'casa', 'visconde', '12', 'santa', 'C', '2010-10-01', '2853'),
+(5, 'joao', '44444444444', '45994852369', '85239450', 'lujiekk@hotmail.com', '123456', 'S', 'casa', 'marroco', '8923', 'maranha', 'C', '1995-08-30', '2853');
+
+INSERT INTO tb_modelos (codmodelo, modelo) VALUES
+(1, 'SUV'),
+(2, 'Sedan'),
+(3, 'Esportivo'),
+(4, 'Conversível'),
+(5, 'Elétrico');
+
+INSERT INTO tb_marcas (codmarca, nome) VALUES
+(1, 'Porsche'),
+(2, 'Ferrari'),
+(3, 'Lamborghini'),
+(4, 'Toyota'),
+(5, 'Tesla'),
+(6, 'Land Rover'),
+(7, 'Audi'),
+(8, 'Maserati'),
+(9, 'Chevrolet'),
+(10, 'McLaren'),
+(11, 'Mercedes-Benz'),
+(12, 'Cadillac'),
+(13, 'GMC'),
+(14, 'Bentley'),
+(15, 'Ram');
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(1, '2018', 'Lamborghini - Aventador S', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(1, '/imagens/lambolaranja.jpeg', 1);
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(2, '2019', 'Ferrari - F488 Spider 3.9', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(2, 'imagens/ferrarif488spider.jpeg', 2);
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(3, '2019', 'Mclaren - 720S 4.0 Spider', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(3, '/imagens/mclaren720s.jpg', 3);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(4, '2022', 'Porsche - 911 GT3', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(4, '/imagens/porsche911gt3.jpeg', 4);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(5, '2021', 'Mercedes-Benz - Amg GTR', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(5, '/imagens/mecaamggt3.jpg', 5);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(6, '2021', 'Mercedes-Benz - G 63', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(6, '/imagens/mecag63.jpeg', 6);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(7, '2018', 'Ferrari - 812 Superfast', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(7, '/imagens/ferrari812super.jpeg', 7);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(8, '2019', 'Lamborghini - Urus', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(8, '/imagens/lamborghiniurus.jpg', 8);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(9, '2022', 'Cadillac - Escalade 600 ESV', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(9, '/imagens/cadillac.jpg', 9);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(10, '2022', 'GMC - Hummer 350 EV Edition 1', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(10, '/imagens/hummer.jpeg', 10);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(11, '2022', 'Chevrolet - Corvette LT2', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(11, '/imagens/corvettelt2.jpeg', 11);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(12, '2021', 'Ferrari - Roma', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(12, '/imagens/ferrariroma.jpeg', 12);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(13, '2021', 'Mercedes-Benz - G 63 AMG', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(13, '/imagens/g63blindada.jpg', 13);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(14, '2021', 'Porsche - 911 Carrera 4S Cabrio', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(14, '/imagens/911carrera.jpeg', 14);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(15, '2012', 'Bentley - Continental GT', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(15, '/imagens/bentley.jpeg', 15);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(16, '2023', 'Toyota - Tundra i-Force', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(16, '/imagens/toyotatundra.jpg', 16);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(17, '2021', 'Porsche - 911 Carrera 4S', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(17, '/imagens/porsche911carrera4s.jpeg', 17);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(18, '2018', 'Maserati - Grancabrio Sport Line', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(18, '/imagens/maseratigrancabrio.jpg', 18);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(19, '2021', 'Chevrolet - Corvette LT3 Stingray Tarfa', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(19, '/imagens/corvettestingray.jpeg', 19);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(20, '2023', 'Ram - 1500 TRX 6.2 Supercharged Hemi', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(20, '/imagens/ram1500.jpeg', 20);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(21, '2022', 'Porsche - Cayenne', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(21, '/imagens/cayene2022.jpeg', 21);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(22, '2023', 'Land Rover - Range Rover Sport First Edition', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(22, '/imagens/rangeroversport.jpg', 22);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(23, '2021', 'Porsche - Cayenne Turbo S', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(23, '/imagens/cayeneturbos.jpeg', 23);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(24, '2022', 'Porsche - 911 Carrera S', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(24, '/imagens/Porsche\ -\ 911\ Carrera\ S.jpeg', 24);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(25, '2015', 'Maserati - Granturismo MC Stradale', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(25, '/imagens/Maserati\ -\ Granturismo\ MC\ Stradale.jpeg', 25);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(26, '2023', 'Porsche - Taycan Cross Turismo 4', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(26, '/imagens/Porsche\ -\ Taycan\ Cross\ Turismo\ 4.jpeg', 26);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(27, '2021', 'Audi - Rs Q8 TFSI QUATTRO', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(27, '/imagens/Audi\ -\ Rs\ Q8\ TFSI\ QUATTRO.jpeg', 27);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(28, '2023', 'Chevrolet - Silverado 1500 LTZ', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(28, '/imagens/Chevrolet\ -\ Silverado\ 1500\ LTZ.jpeg', 28);
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(29, '2022', 'Audi - RS E-TRON GT', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(29, '/imagens/Audi\ -\ RS\ E-TRON\ GT.jpeg', 29);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(30, '2021', 'Tesla - Model S Plaid', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(30, '/imagens/Tesla\ -\ Model\ S\ Plaid.jpeg', 30);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(31, '2022', 'Lambroghini - Huracán STO', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(31, '/imagens/lamborghiniroxa.png', 31);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(32, '2022', 'Tesla - Model S Plaid', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(32, '/imagens/tesla.png', 32);
+
+
+INSERT INTO tb_carros (codcarro, ano, nome, ativo) VALUES
+(33, '2022', 'Ferrari - SF 90 Stradale', 'S');
+INSERT INTO tb_imagens (codimagem, caminhoimagem, codcarro) VALUES
+(33, '/imagens/ferrari.png', 33);
